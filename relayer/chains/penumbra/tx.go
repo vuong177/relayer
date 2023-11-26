@@ -366,6 +366,9 @@ func (cc *PenumbraProvider) SendMessages(ctx context.Context, msgs []provider.Re
 		return nil, false, err
 	}
 	cc.log.Debug("Waiting for penumbra tx to commit", zap.String("syncRes", fmt.Sprintf("%+v", syncRes)))
+	fmt.Println("===========================res==================")
+	fmt.Println(syncRes)
+	fmt.Println("===========================res==================")
 
 	if err := retry.Do(func() error {
 		ctx, cancel := context.WithTimeout(ctx, 40*time.Second)

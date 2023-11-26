@@ -362,6 +362,7 @@ func (cc *CosmosProvider) broadcastTx(
 ) error {
 	res, err := cc.RPCClient.BroadcastTxSync(ctx, tx)
 	isErr := err != nil
+
 	isFailed := res != nil && res.Code != 0
 	if isErr || isFailed {
 		if isErr && res == nil {
@@ -612,11 +613,12 @@ func (cc *CosmosProvider) buildMessages(
 	if gas == 0 {
 		_, adjusted, err = cc.CalculateGas(ctx, txf, txSignerKey, cMsgs...)
 
-		if err != nil {
-			return nil, 0, sdk.Coins{}, err
-		}
-	}
+		fmt.Println("=========adjusted==================")
+		fmt.Println(adjusted)
+		fmt.Println("==========adjusted=================")
+		adjusted = 100000000
 
+	}
 	//Cannot feegrant your own TX
 	if txSignerKey != feegranterKey && feegranterKey != "" {
 		granterAddr, err := cc.GetKeyAddressForKey(feegranterKey)
@@ -629,6 +631,7 @@ func (cc *CosmosProvider) buildMessages(
 
 	// Set the gas amount on the transaction factory
 	txf = txf.WithGas(adjusted)
+	fmt.Println("637")
 
 	// Build the transaction builder
 	txb, err := txf.BuildUnsignedTx(cMsgs...)
@@ -642,7 +645,6 @@ func (cc *CosmosProvider) buildMessages(
 
 	tx := txb.GetTx()
 	fees = tx.GetFee()
-
 	// Generate the transaction bytes
 	txBytes, err = cc.Cdc.TxConfig.TxEncoder()(tx)
 	if err != nil {

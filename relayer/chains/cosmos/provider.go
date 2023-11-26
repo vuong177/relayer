@@ -354,10 +354,20 @@ func (cc *CosmosProvider) updateNextAccountSequence(sequenceGuard *WalletState, 
 }
 
 func (cc *CosmosProvider) setCometVersion(log *zap.Logger, version string) {
+	if version == "0.4.0" {
+		cc.cometLegacyEncoding = false
+		return
+	}
+
+	if version == "0.12.0" {
+		cc.cometLegacyEncoding = false
+		return
+	}
 	cc.cometLegacyEncoding = cc.legacyEncodedEvents(log, version)
 }
 
 func (cc *CosmosProvider) legacyEncodedEvents(log *zap.Logger, version string) bool {
+
 	return semver.Compare("v"+version, cometEncodingThreshold) < 0
 }
 
